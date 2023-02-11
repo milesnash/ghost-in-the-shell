@@ -1,14 +1,23 @@
 import { javascript, typescript } from "projen";
+
+const tsconfig = {
+  compilerOptions: {
+    baseUrl: ".",
+    lib: ["dom", "es2021"],
+    useUnknownInCatchVariables: true,
+  },
+};
+
 const project = new typescript.TypeScriptAppProject({
   defaultReleaseBranch: "main",
+  licensed: false,
   name: "css-anims",
+  package: false,
   packageManager: javascript.NodePackageManager.NPM,
   prettier: true,
   projenrcTs: true,
-
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
+  publishDryRun: true,
+  tsconfig,
 });
+
 project.synth();
