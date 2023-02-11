@@ -32,6 +32,7 @@
     ".projenrc.js",
     "src/**/*.ts",
     "test/**/*.ts",
+    "webpack.config.ts",
     ".projenrc.ts",
     "projenrc/**/*.ts"
   ],

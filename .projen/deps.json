@@ -20,6 +20,10 @@
       "type": "build"
     },
     {
+      "name": "copy-webpack-plugin",
+      "type": "build"
+    },
+    {
       "name": "eslint-config-prettier",
       "type": "build"
     },
@@ -71,11 +75,27 @@
       "type": "build"
     },
     {
+      "name": "ts-loader",
+      "type": "build"
+    },
+    {
       "name": "ts-node",
       "type": "build"
     },
     {
       "name": "typescript",
+      "type": "build"
+    },
+    {
+      "name": "webpack",
+      "type": "build"
+    },
+    {
+      "name": "webpack-cli",
+      "type": "build"
+    },
+    {
+      "name": "webpack-dev-server",
       "type": "build"
     }
   ],

@@ -111,6 +111,14 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
+    "start": {
+      "name": "start",
+      "steps": [
+        {
+          "exec": "webpack && webpack-dev-server --mode development"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",
