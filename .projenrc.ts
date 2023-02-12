@@ -9,6 +9,8 @@ const tsconfig = {
 };
 
 const project = new typescript.TypeScriptAppProject({
+  authorName: "Miles Nash",
+  authorEmail: "miles@milesnash.com",
   defaultReleaseBranch: "main",
   devDeps: [
     "copy-webpack-plugin",
@@ -17,7 +19,7 @@ const project = new typescript.TypeScriptAppProject({
     "webpack-cli",
     "webpack-dev-server",
   ],
-  licensed: false,
+  license: "MIT",
   name: "css-anims",
   package: false,
   packageManager: javascript.NodePackageManager.NPM,
