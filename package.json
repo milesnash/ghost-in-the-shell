@@ -1,5 +1,5 @@
 {
-  "name": "css-anims",
+  "name": "ghost-in-the-shell",
   "scripts": {
     "build": "npx projen build",
     "clobber": "npx projen clobber",

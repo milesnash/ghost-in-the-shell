@@ -20,7 +20,7 @@ const project = new typescript.TypeScriptAppProject({
     "webpack-dev-server",
   ],
   license: "MIT",
-  name: "css-anims",
+  name: "ghost-in-the-shell",
   package: false,
   packageManager: javascript.NodePackageManager.NPM,
   prettier: true,
