@@ -19,7 +19,7 @@ const config: Configuration & { devServer: DevServerConfiguration } = {
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: "bundle.js",
+    filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
   mode: "development",
