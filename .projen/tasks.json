@@ -97,7 +97,12 @@
     },
     "package": {
       "name": "package",
-      "description": "Creates the distribution package"
+      "description": "Creates the distribution package",
+      "steps": [
+        {
+          "exec": "webpack --mode production -o docs"
+        }
+      ]
     },
     "post-compile": {
       "name": "post-compile",

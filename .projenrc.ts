@@ -33,6 +33,10 @@ const project = new typescript.TypeScriptAppProject({
   },
 });
 
+project.tasks
+  .tryFind("package")
+  ?.prependExec("webpack --mode production -o docs");
+
 project.addTask("start", {
   exec: "webpack && webpack-dev-server --mode development",
 });
