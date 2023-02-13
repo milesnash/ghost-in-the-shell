@@ -35,6 +35,7 @@ const animateStrapline = async (
   const straplines: HTMLParagraphElement[] = [];
 
   els.forEach((el) => {
+    el.style.display = "block";
     straplines.push(el);
   });
 
