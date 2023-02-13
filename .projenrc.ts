@@ -1,4 +1,4 @@
-import { github, javascript, typescript } from "projen";
+import { javascript, typescript } from "projen";
 
 const tsconfig = {
   compilerOptions: {
@@ -24,9 +24,6 @@ const project = new typescript.TypeScriptAppProject({
   package: false,
   packageManager: javascript.NodePackageManager.NPM,
   prettier: true,
-  projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
-    secret: "GITHUB_TOKEN",
-  }),
   projenrcTs: true,
   publishDryRun: true,
   tsconfig,
