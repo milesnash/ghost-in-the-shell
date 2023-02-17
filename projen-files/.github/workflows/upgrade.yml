@@ -80,12 +80,6 @@ jobs:
           author: github-actions <github-actions@github.com>
           committer: github-actions <github-actions@github.com>
           signoff: true
-      - name: Wait for checks to pass
-        uses: r0x0d/wait-for-ci-checks@0.2.0
-        id: wait-for-green
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkNames: "build;Validate PR title"
       - name: Enable Pull Request Automerge
         if: steps.create-pr.outputs.pull-request-operation == 'created' && steps.wait-for-green.outputs.success == 'true'
         uses: alexwilson/enable-github-automerge-action@main
