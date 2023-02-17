@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { EOL } from "os";
 import { sep } from "path";
-import { TextFile, github, javascript, typescript } from "projen";
+import { javascript, TextFile, typescript } from "projen";
 
 const tsconfig = {
   compilerOptions: {
@@ -17,11 +17,6 @@ const project = new typescript.TypeScriptAppProject({
   defaultReleaseBranch: "main",
   depsUpgradeOptions: {
     workflow: false, // Customised workflow below
-    workflowOptions: {
-      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
-        secret: "GITHUB_TOKEN",
-      }),
-    },
   },
   devDeps: [
     "copy-webpack-plugin",
