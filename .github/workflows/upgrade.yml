@@ -90,8 +90,7 @@ jobs:
           checkNames: "build;Validate PR title"
       - name: Enable Pull Request Automerge
         if: steps.create-pr.outputs.pull-request-operation == 'created' && steps.wait-for-green.outputs.success == 'true'
-        uses: peter-evans/enable-pull-request-automerge@v2
+        uses: alexwilson/enable-github-automerge-action@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
-          merge-method: squash
+          merge-method: SQUASH
