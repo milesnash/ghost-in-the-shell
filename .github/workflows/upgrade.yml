@@ -87,7 +87,7 @@ jobs:
         id: wait-for-green
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ignore_checks: Create And Merge Pull Request
+          ignore_checks: "Create And Merge Pull Request"
       - name: Enable Pull Request Automerge
         if: steps.create-pr.outputs.pull-request-operation == 'created' && steps.wait-for-green.outputs.success == 'true'
         uses: peter-evans/enable-pull-request-automerge@v2
