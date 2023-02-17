@@ -82,7 +82,7 @@ jobs:
           signoff: true
       - name: Enable Pull Request Automerge
         if: steps.create-pr.outputs.pull-request-operation == 'created'
-        uses: alexwilson/enable-github-automerge-action@main
+        uses: peter-evans/enable-pull-request-automerge@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          merge-method: SQUASH
+          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
+          merge-method: squash
