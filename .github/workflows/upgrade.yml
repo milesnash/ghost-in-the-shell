@@ -83,7 +83,7 @@ jobs:
           committer: github-actions <github-actions@github.com>
           signoff: true
       - name: Wait for checks to pass
-        uses: r0x0d/wait-for-ci-checks@v0.2.0
+        uses: r0x0d/wait-for-ci-checks@0.2.0
         id: wait-for-green
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
