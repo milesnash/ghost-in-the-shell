@@ -80,8 +80,10 @@ jobs:
           author: github-actions <github-actions@github.com>
           committer: github-actions <github-actions@github.com>
           signoff: true
+      - uses: jchen1/wait-for-green@v1.0.8
+        id: wait-for-green
       - name: Enable Pull Request Automerge
-        if: steps.create-pr.outputs.pull-request-operation == 'created'
+        if: steps.create-pr.outputs.pull-request-operation == 'created' && steps.wait-for-green.outputs.success == 'true'
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
