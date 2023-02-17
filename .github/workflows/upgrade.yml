@@ -86,5 +86,5 @@ jobs:
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         uses: alexwilson/enable-github-automerge-action@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: SQUASH
