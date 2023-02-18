@@ -25,6 +25,7 @@ const project = new typescript.TypeScriptAppProject({
     "webpack-cli",
     "webpack-dev-server",
   ],
+  gitignore: ["/scratch"],
   license: "MIT",
   mergify: false,
   name: "ghost-in-the-shell",

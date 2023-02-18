@@ -1,171 +1,114 @@
-import { getBlankProbability, getRandomInt, range, sleep } from "./util";
+import {
+  durationMs,
+  inputColor,
+  randMultipliers,
+  straplineLines,
+} from "./constants";
+import {
+  getBlankProbabilityFn,
+  getInput,
+  getRandomInt,
+  setFont,
+  sleep,
+} from "./util";
 
-const durationMs = 3000 as const;
-const inputColor = "#41ae6e" as const;
-const input = "0123456789" as const;
-const fontSizeDefault = "16" as const;
-const fontSizeRange = range(12, 20).map(String);
-const marginRange = range(0, 6).map(String);
-const randMultipliers = {
-  input: input.length,
-  sleep: 200,
-} as const;
+export const run = async (canvas: HTMLCanvasElement) => {
+  const ctx = canvas.getContext("2d");
+  const startTime = Date.now();
+  const endTime = startTime + durationMs;
+  let currentTime = startTime;
 
-const getInput = () => input[getRandomInt(randMultipliers.input)];
-const updateSpanInput = (
-  span: HTMLSpanElement,
+  if (!ctx) {
+    throw new Error("ctx is null");
+  }
+
+  ctx.fillStyle = inputColor;
+  setFont(ctx);
+
+  while (currentTime < endTime + 1000) {
+    const getBlankProbability = getBlankProbabilityFn(startTime, durationMs);
+
+    await sleep(Math.floor(Math.random() * randMultipliers.sleep))
+      .then(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        updateText(canvas, ctx, startTime, () =>
+          getBlankProbability(Date.now()) > Math.random() ? "  " : null
+        );
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    currentTime = Date.now();
+  }
+};
+
+const updateText = (
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  startTime: number,
   overrideFn: () => string | null = () => null
 ) => {
-  let newInput = "";
+  const blankProb = getBlankProbabilityFn(startTime, durationMs)(Date.now());
+  const { offsetHeight, offsetWidth } = canvas;
+  const middle = { x: offsetWidth / 2, y: offsetHeight / 2 };
+  let currentLine: string[] = [];
+  let currentStrapline: number | null = 0;
+  let totalTextHeight = 0;
 
-  for (let i = 0; i < (span.innerText?.length ?? 0); i++) {
-    newInput += overrideFn() ?? getInput();
-  }
+  while (totalTextHeight < offsetHeight) {
+    currentLine.push(overrideFn() ?? getInput());
 
-  span.innerText = newInput;
-};
+    const { fontBoundingBoxAscent: height, width } = ctx.measureText(
+      currentLine.join("")
+    );
+    const lineReady = width >= offsetWidth;
+    const lineContainsStrapline =
+      totalTextHeight <= middle.y && totalTextHeight + height >= middle.y;
+    const addStraplineToCurrentLine =
+      typeof currentStrapline === "number" &&
+      (lineContainsStrapline || currentStrapline > 0);
 
-const animateStrapline = async (
-  els: NodeListOf<HTMLParagraphElement>,
-  startTime: number
-) => {
-  const endTime = startTime + durationMs;
-  const shuffleText = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-  const straplines: HTMLParagraphElement[] = [];
-
-  els.forEach((el) => {
-    el.style.display = "block";
-    straplines.push(el);
-  });
-
-  await Promise.all(
-    straplines.map(async (strapline) => {
-      const origText = strapline.innerText;
-
-      while (Date.now() < endTime) {
-        await sleep(Math.floor(Math.random() * randMultipliers.sleep))
-          .then(() => {
-            let newText = "";
-
-            for (let i = 0; i < origText.length; i++) {
-              newText +=
-                getRandomInt(4) > 1
-                  ? shuffleText[getRandomInt(shuffleText.length)]
-                  : " ";
-            }
-
-            strapline.innerText = newText;
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }
-
-      strapline.innerText = origText;
-    })
-  );
-};
-
-const animateOverlay = async (overlay: HTMLDivElement, startTime: number) => {
-  overlay.style.display = "inline-block";
-  const left = document.createElement("div");
-
-  const spans: HTMLSpanElement[] = [];
-
-  overlay.replaceChildren(left);
-
-  while (left.offsetHeight < overlay.offsetHeight) {
-    const p = document.createElement("p");
-    const pVerticalMargin =
-      marginRange[getRandomInt(4) > 2 ? getRandomInt(marginRange.length) : 0];
-    const fontSize =
-      getRandomInt(10) > 8
-        ? fontSizeRange[getRandomInt(fontSizeRange.length)]
-        : fontSizeDefault;
-    p.style.margin = `${pVerticalMargin}px 0px ${pVerticalMargin}px`;
-    p.style.fontSize = fontSize;
-    p.style.minHeight = fontSize;
-
-    const span = document.createElement("span");
-    span.style.color = p.style.backgroundColor;
-    span.innerText = getInput();
-    spans.push(span);
-    p.append(span);
-
-    left.append(p);
-  }
-
-  const right = left.cloneNode(true) as HTMLDivElement;
-  right.querySelectorAll("span").forEach((span) => spans.push(span));
-  left.classList.add("mn-gits-overlay-segment", "left");
-  right.classList.add("mn-gits-overlay-segment", "right");
-
-  overlay.append(right);
-
-  await Promise.all(
-    spans.map(async (span) => {
-      const parentDiv = span.closest<HTMLDivElement>(
-        ".mn-gits-overlay-segment"
-      );
-
-      if (!parentDiv) {
-        throw new Error("Cannot find parent div");
-      }
-
-      let { offsetWidth } = span;
-
-      while (span.offsetWidth < parentDiv?.offsetWidth) {
-        span.innerText += getInput();
-        if (span.offsetWidth === offsetWidth) {
-          throw new Error(`Unchanged offset width after update ${offsetWidth}`);
-        }
-      }
-
-      span.style.color = inputColor;
-
-      let animating = true;
-
-      while (animating) {
-        const blankProbability = getBlankProbability(
-          Date.now(),
-          startTime,
-          durationMs
+    if (lineReady) {
+      if (addStraplineToCurrentLine) {
+        const straplineLine = straplineLines[currentStrapline!];
+        const straplineStart = Math.floor(
+          (currentLine.length - straplineLine.length) / 2
         );
 
-        await sleep(Math.floor(Math.random() * randMultipliers.sleep))
-          .then(() => {
-            updateSpanInput(span, () =>
-              blankProbability > Math.random() ? "  " : null
-            );
+        let currentChar = 0;
 
-            if (span.innerText.trim().length === 0) {
-              animating = false;
-            }
-          })
-          .catch((err) => {
-            throw err;
-          });
+        for (const char of straplineLine) {
+          const currentLineIdx = straplineStart + currentChar;
+
+          currentLine[currentLineIdx] =
+            blankProb < 1
+              ? [currentLine[currentLineIdx], char, getInput()][getRandomInt(3)]
+              : char;
+
+          currentChar++;
+        }
+
+        currentStrapline =
+          currentStrapline === straplineLines.length - 1
+            ? null
+            : currentStrapline! + 1;
       }
-    })
-  );
 
-  overlay.style.display = "none";
-};
+      if (blankProb === 1) {
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+      }
 
-export const run = async (container: HTMLDivElement) => {
-  const startTime = Date.now();
-  const overlay = container.querySelector<HTMLDivElement>(".mn-gits-overlay");
-  const straplines = container.querySelectorAll<HTMLParagraphElement>(
-    ".mn-gits-strapline p"
-  );
-
-  if (!overlay || !straplines) {
-    throw new Error("Unable to find overlay or strapline container");
+      ctx.fillText(
+        blankProb < 1 ? currentLine.join("") : currentLine.join("").trim(),
+        blankProb < 1 ? 0 : offsetWidth / 2,
+        totalTextHeight,
+        offsetWidth
+      );
+      totalTextHeight += height;
+      setFont(ctx, blankProb < 1);
+      currentLine = [];
+    }
   }
-
-  await Promise.all([
-    animateOverlay(overlay, startTime),
-    animateStrapline(straplines, startTime),
-  ]);
 };
